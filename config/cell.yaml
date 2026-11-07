@@ -1,0 +1,32 @@
+# Hithium N162Ah sodium-ion cell. Units are in the key names.
+Q_nom_Ah: {value: 162, source: "datasheet:Hithium N162"}
+V_nom: {value: 2.82, source: "datasheet:Hithium N162"}
+V_min: {value: 1.5, source: "datasheet:Hithium N162"}
+V_max: {value: 3.3, source: "datasheet:Hithium N162"}
+mass_kg: {value: 4.6, source: "datasheet:Hithium N162"}
+cp_J_kgK: {value: 1050, source: "assumed"}
+R_dc_ref_ohm:
+  value: 0.56e-3
+  source: "derived: 94% round-trip energy efficiency at 1P (Hithium) -> 29.2 Wh lost over 2 h at 162 A"
+Ea_R_J_mol: {value: 20000, source: "assumed: resistance vs temperature"}
+T_ref_C: {value: 25, source: "assumed"}
+T_lim_C: {value: 60, source: "datasheet:Hithium N162"}
+T_charge_max_C:
+  value: 60
+  source: "TBD-REON: datasheet:Hithium N162 lists 60 (EAST 160 Ah lists 40; sweep)"
+I_max_A: {value: 162, source: "datasheet:Hithium 1P continuous"}
+soc_min: {value: 0.05, source: "TBD-REON: normal DoD"}
+soc_max: {value: 0.95, source: "TBD-REON: normal DoD"}
+ocv_table:
+  value:
+    soc: [0, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 0.95, 1.0]
+    ocv: [2.0, 2.45, 2.6, 2.72, 2.8, 2.9, 3.0, 3.12, 3.18, 3.3]
+  source: "assumed: placeholder; TODO replace with datasheet curve"
+r_soc_table:
+  value:
+    soc: [0, 0.1, 0.2, 0.5, 0.9, 1.0]
+    factor: [2.0, 1.4, 1.1, 1.0, 1.05, 1.2]
+  source: "assumed"
+r_growth_k: {value: 1.0, source: "assumed: R doubles at 30% capacity loss"}
+r_growth_ref_loss: {value: 0.3, source: "assumed: R grows by r_growth_k at this capacity loss"}
+dUdT_V_K: {value: 0.0, source: "assumed: entropic heat neglected"}

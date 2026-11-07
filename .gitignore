@@ -1,0 +1,11 @@
+data/
+__pycache__/
+.cache/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+build/
+dist/
+.streamlit/secrets.toml
+.claude/settings.local.json

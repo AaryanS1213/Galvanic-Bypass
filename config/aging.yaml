@@ -1,0 +1,20 @@
+Ea_cal_J_mol:
+  value: 28500
+  source: "paper: EES Batteries 2026 d6eb00020g, 25 vs 45 C at 90% SOC, layered oxide (sweep 20000-50000)"
+Ea_cyc_J_mol:
+  value: 28500
+  source: "paper: Chemical Science 2026 d6sc03211g, NVP//HC, fade per cycle 3.35x at 60 C vs 25 C"
+z: {value: 0.5, source: "assumed"}
+A_cal_per_day_z:
+  value: 1.235e-3
+  source: "derived: 3.1% loss over 630 days at 25 C, 90% SOC (EES 2026, layered oxide)"
+# f(SOC) = f_min for SOC <= soc_lo, linear to 1.0 at soc_hi, constant above.
+f_soc:
+  f_min: {value: 0.1, source: "assumed: sweep f_min"}
+  soc_lo: {value: 0.1, source: "assumed"}
+  soc_hi: {value: 0.9, source: "assumed"}
+B_cyc:
+  value: 5.0e-6
+  source: "derived: 20% loss over 20,000 EFC at 25 C (Hithium rating; calendar/cycle split assumed)"
+eol_soh_fixed: {value: 0.70, source: "paper: REON brief stationary threshold"}
+eol_energy_frac: {value: 0.70, source: "paper: REON brief, delivered energy at system boundary"}

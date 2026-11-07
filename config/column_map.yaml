@@ -1,0 +1,26 @@
+# Canonical telemetry name (gb/schema.py) -> column name in the REON CSV.
+# Identity until the REON schema is known. In wide CSVs the value is the per-cell
+# column prefix (e.g. temp_C -> "T" reads columns T_000, T_001, ...).
+columns:
+  timestamp: {value: timestamp, source: "TBD-REON"}
+  cell_id: {value: cell_id, source: "TBD-REON"}
+  voltage_V: {value: voltage_V, source: "TBD-REON"}
+  current_A: {value: current_A, source: "TBD-REON"}
+  temp_C: {value: temp_C, source: "TBD-REON"}
+  soc: {value: soc, source: "TBD-REON"}
+  soh: {value: soh, source: "TBD-REON"}
+  resistance_mOhm: {value: resistance_mOhm, source: "TBD-REON"}
+  bypass_state: {value: bypass_state, source: "TBD-REON"}
+  room_temp_C: {value: room_temp_C, source: "TBD-REON"}
+
+# Units of the source columns. NOT USED YET: gb.ingest assumes canonical units and only
+# auto-detects percent soc/soh and ISO / epoch-s / epoch-ms timestamps.
+units:
+  timestamp: {value: "iso8601 or epoch_s", source: "TBD-REON"}
+  voltage_V: {value: V, source: "TBD-REON"}
+  current_A: {value: A, source: "TBD-REON"}
+  temp_C: {value: C, source: "TBD-REON"}
+  soc: {value: fraction, source: "TBD-REON"}
+  soh: {value: fraction, source: "TBD-REON"}
+  resistance_mOhm: {value: mOhm, source: "TBD-REON"}
+  room_temp_C: {value: C, source: "TBD-REON"}

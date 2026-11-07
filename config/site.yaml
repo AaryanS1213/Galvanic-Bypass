@@ -1,0 +1,32 @@
+room_C: {value: 25, source: "assumed: held constant by HVAC"}
+dt_s: {value: 60, source: "assumed: 1-minute simulation step"}
+
+duty:
+  charge_start_h: {value: 1, source: "assumed"}
+  charge_end_h: {value: 5, source: "assumed"}
+  charge_P_W: {value: -15000, source: "assumed: charge until soc_max"}
+  discharge_start_h: {value: 15, source: "assumed: dispatch window"}
+  discharge_end_h: {value: 17, source: "assumed: dispatch window"}
+  discharge_P_W: {value: 30000, source: "assumed: dispatch window"}
+  daily_energy_frac_range: {value: [0.5, 1.0], source: "assumed"}
+  full_dod_day_frac: {value: 0.3, source: "assumed"}
+  loss_frac: {value: 0.03, source: "derived: cell R_eff 0.56 mOhm + switch 0.2 mOhm at 0.5C is about 2% of throughput, rounded up"}
+  full_day_reserve_frac: {value: 0.95, source: "assumed: operators keep about 5% energy reserve on full-depth days"}
+  plan_guard_margin: {value: 0.02, source: "assumed"}
+
+# HVAC: cost accounting only; never controlled.
+hvac:
+  cop_ref: {value: 3.0, source: "assumed"}
+  cop_ref_room_C: {value: 25, source: "assumed: room temperature at which cop_ref applies"}
+  cop_slope_per_K: {value: 0.03, source: "assumed: COP falls as the room is held colder"}
+  UA_per_string_WK: {value: 40, source: "assumed"}
+  outdoor_mean_C: {value: 30, source: "assumed"}
+  outdoor_amp_C: {value: 7, source: "assumed"}
+  outdoor_peak_h: {value: 15, source: "assumed"}
+
+scale:
+  cess_energy_kWh: {value: 5000, source: "datasheet:REON CESS"}
+  cess_power_kW: {value: 2500, source: "datasheet:REON CESS"}
+  strings_per_cess:
+    value: 86
+    source: "derived: ceil(5000 / 58.48 kWh per string); FLAGGED assumption that a CESS is N identical strings"

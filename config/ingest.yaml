@@ -1,0 +1,6 @@
+# Telemetry ingestion data-quality tolerances (gb/schema.py, gb/ingest.py). Not physical parameters.
+current_agree_abs_A: {value: 0.5, source: "assumed: per-row string current may differ from the timestamp median by max(abs, rel * |median|)"}
+current_agree_rel: {value: 0.01, source: "assumed"}
+percent_scale_min: {value: 1.5, source: "assumed: soc/soh with max above this (and <= 100) is treated as percent"}
+gap_factor: {value: 1.5, source: "assumed: a timestamp step longer than gap_factor x median step is a sampling gap"}
+epoch_ms_threshold: {value: 1.0e+11, source: "assumed: numeric timestamps with median above this are epoch milliseconds"}

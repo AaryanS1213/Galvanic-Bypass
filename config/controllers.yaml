@@ -1,0 +1,35 @@
+control_dt_s: {value: 60, source: "assumed: product spec, decide every minute"}
+T_band_edge_C:
+  value: 30
+  source: "derived: between Hithium 25 C rating condition and 35 C recommended storage max (sweep 25-35)"
+t_lead_s: {value: 600, source: "assumed"}
+trend_window_s: {value: 300, source: "assumed"}
+hysteresis_K: {value: 2, source: "assumed"}
+min_dwell_s: {value: 300, source: "assumed"}
+max_out_s: {value: 1200, source: "assumed"}
+T_crit_C: {value: "= T_lim_C - 3", source: "derived: T_lim 60 - 3 K margin"}
+T_charge_min_C: {value: 15, source: "assumed: plating guard for hard carbon at ~0.25C"}
+T_opt_C:
+  value: 20
+  source: "derived: V-shaped ageing vs temperature, Li-ion optimum 15-25 C by C-rate (Waldmann 2014; Bozorgchenani 2022), shifted up for hard-carbon plating margin"
+
+# SOC cap keyed on learned local air temperature: below 28 C -> soc_max, 28-31 C -> 0.80, above 31 C -> 0.70.
+zone_soc_cap:
+  air_thresholds_C: {value: [28, 31], source: "assumed"}
+  caps: {value: ["= soc_max", 0.80, 0.70], source: "assumed"}
+
+drain_soc_min: {value: 0.5, source: "assumed"}
+max_bypass_frac: {value: 0.10, source: "assumed"}
+
+# Baseline: matched protection, REON-like threshold logic.
+threshold_bypass:
+  T_on_C: {value: "= T_band_edge_C", source: "assumed: matched protection, REON-like logic; TBD-REON"}
+  T_off_C: {value: "= T_band_edge_C - 3", source: "assumed: matched protection, REON-like logic; TBD-REON"}
+
+# Baseline: whole-pack derate.
+derate:
+  T_start_C: {value: "= T_band_edge_C", source: "assumed: matched protection"}
+  T_stop_C: {value: "= T_crit_C", source: "assumed"}
+  variant_typical_T_start_C: {value: 50, source: "assumed"}
+
+cooling_match_tolerance_K: {value: 0.2, source: "assumed"}

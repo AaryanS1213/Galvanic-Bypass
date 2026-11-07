@@ -1,0 +1,7 @@
+# TODO: every value here needs a real source.
+capacity_value_usd_per_kw_month: {value: 10, source: "assumed TODO"}
+energy_price_usd_per_kwh: {value: 0.12, source: "assumed TODO"}
+pack_cost_usd_per_kwh: {value: 300, source: "assumed TODO"}
+discount_rate: {value: 0.08, source: "assumed TODO"}
+grid_co2_kg_per_kwh: {value: 0.4, source: "assumed TODO"}
+analysis_years: {value: 15, source: "assumed TODO"}

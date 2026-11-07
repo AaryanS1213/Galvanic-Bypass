@@ -1,0 +1,86 @@
+# Synthetic-telemetry scenarios for gb/synth.py. Every offset and factor is assumed;
+# TODO: replace zone offsets with COMSOL CFD of the enclosure air field when available.
+
+# Manufacturing spread (relative 1-sigma, gaussian).
+spread:
+  Q_rel_std: {value: 0.015, source: "assumed: cell-to-cell capacity spread"}
+  R_rel_std: {value: 0.05, source: "assumed: cell-to-cell DC resistance spread"}
+  G_cool_rel_std: {value: 0.10, source: "assumed: cell-to-cell cooling spread"}
+
+# Gaussian sensor noise (1-sigma). Current noise is drawn once per timestamp (one string current sensor).
+sensor_noise:
+  T_K: {value: 0.1, source: "assumed"}
+  V_V: {value: 0.002, source: "assumed"}
+  I_A: {value: 0.2, source: "assumed"}
+
+initial_soc: {value: 0.5, source: "assumed: synthetic run starts half full at midnight"}
+start_timestamp: {value: "2026-07-01T00:00:00Z", source: "assumed: arbitrary synthetic start (UTC)"}
+
+# Defect kinds:
+#   zone:         modules [...], optional slots [...], offset_K  -> local air = room + offset_K
+#   high_R:       cell_id, factor                                -> R_ref *= factor
+#   poor_cooling: cell_id, factor                                -> G_cool *= factor
+catalog:
+  zones:
+    description: {value: "hot air zones plus one high-R cell in a cool zone", source: "assumed"}
+    defects:
+      vertical_gradient:
+        kind: {value: zone, source: "assumed"}
+        modules: {value: [6, 7], source: "assumed: top modules sit in warmer air"}
+        offset_K: {value: 8.0, source: "assumed: vertical air gradient; TODO COMSOL CFD"}
+      pcs_hot_spot:
+        kind: {value: zone, source: "assumed"}
+        modules: {value: [5], source: "assumed: module next to the PCS"}
+        slots: {value: [0, 1, 2, 3], source: "assumed: slots nearest the PCS"}
+        offset_K: {value: 5.0, source: "assumed: PCS exhaust hot spot; TODO COMSOL CFD"}
+      cool_zone_high_R:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 24, source: "derived: module 1 slot 8 = 1 * 16 + 8 (cool zone, separates causes)"}
+        factor: {value: 2.0, source: "assumed"}
+
+  zones_light:
+    description: {value: "one hot module plus one high-R cell in a cool zone", source: "assumed"}
+    defects:
+      top_module:
+        kind: {value: zone, source: "assumed"}
+        modules: {value: [7], source: "assumed: top module sits in warmer air"}
+        offset_K: {value: 8.0, source: "assumed: vertical air gradient; TODO COMSOL CFD"}
+      cool_zone_high_R:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 24, source: "derived: module 1 slot 8 = 1 * 16 + 8 (cool zone, separates causes)"}
+        factor: {value: 2.0, source: "assumed"}
+
+  faulty_cells:
+    description: {value: "no zones; 3 high-R, 2 poor-cooling, 1 cell with both", source: "assumed"}
+    defects:
+      high_R_a:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 10, source: "assumed"}
+        factor: {value: 2.5, source: "assumed"}
+      high_R_b:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 50, source: "assumed"}
+        factor: {value: 2.5, source: "assumed"}
+      high_R_c:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 90, source: "assumed"}
+        factor: {value: 2.5, source: "assumed"}
+      poor_cooling_a:
+        kind: {value: poor_cooling, source: "assumed"}
+        cell_id: {value: 30, source: "assumed"}
+        factor: {value: 0.2, source: "assumed"}
+      poor_cooling_b:
+        kind: {value: poor_cooling, source: "assumed"}
+        cell_id: {value: 110, source: "assumed"}
+        factor: {value: 0.2, source: "assumed"}
+      both_high_R:
+        kind: {value: high_R, source: "assumed"}
+        cell_id: {value: 70, source: "assumed"}
+        factor: {value: 2.5, source: "assumed"}
+      both_poor_cooling:
+        kind: {value: poor_cooling, source: "assumed"}
+        cell_id: {value: 70, source: "assumed"}
+        factor: {value: 0.2, source: "assumed"}
+
+  uniform:
+    description: {value: "manufacturing spread only, no defects", source: "assumed"}

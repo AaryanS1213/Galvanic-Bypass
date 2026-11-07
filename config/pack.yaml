@@ -1,0 +1,11 @@
+# One REON EBS-sized string of series cells.
+n_modules: {value: 8, source: "assumed: 128 x 456.8 Wh = 58.5 kWh, close to EBS 60 kWh"}
+cells_per_module: {value: 16, source: "assumed: 128 x 456.8 Wh = 58.5 kWh, close to EBS 60 kWh"}
+G_ij_WK: {value: 0.5, source: "assumed: sweep 0.2-5"}
+G_cool_WK: {value: 1.0, source: "assumed: replaced by identify.py when CSV is available"}
+R_on_series_ohm: {value: 0.2e-3, source: "TBD-REON"}
+R_on_bypass_ohm: {value: 0.2e-3, source: "TBD-REON"}
+switch_heat_to_cell_frac: {value: 0.5, source: "assumed"}
+V_pcs_min_V: {value: 250, source: "TBD-REON"}
+V_pcs_max_V: {value: 450, source: "TBD-REON"}
+P_rated_W: {value: 30000, source: "datasheet:REON EBS"}
