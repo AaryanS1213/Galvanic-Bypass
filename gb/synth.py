@@ -168,12 +168,15 @@ def duty_profile(
     """One day's operator request. Returns (P_request(t), in_dispatch_window(t), plan_Wh).
 
     t is time of day [s] (scalar or array). Day energy fraction: frac = 1 with probability
-    full_dod_day_frac, else frac ~ U(daily_energy_frac_range). plan_Wh = frac * E_full [Wh],
-    E_full = full_day_plan_Wh(cfg) (deliverable BOL energy soc_min..soc_max times the reserve).
+    full_dod_day_frac, else frac ~ U(daily_energy_frac_range). E_full = full_day_plan_Wh(cfg)
+    (deliverable BOL energy soc_min..soc_max times the reserve). The discharge lasts
+    n = round(frac * E_full / P_d / dt) steps of site.dt_s (clipped to the window), so
+    plan_Wh = n * dt * P_d / 3600 [Wh] exactly equals the energy requested on the dt grid
+    (|plan_Wh - frac * E_full| <= P_d * dt / 7200).
       P_request = charge_P_W     for charge_start_h <= t/3600 < charge_end_h  (the plant stops
                                  charging when the first cell reaches soc_max: "until full")
-                = discharge_P_W  for discharge_start <= t < discharge_start + plan_Wh / P * 3600,
-                                 clipped to discharge_end_h (constant power; light days end early)
+                = discharge_P_W  for discharge_start <= t < discharge_start + n * dt
+                                 (constant power; light days end early)
                 = 0 otherwise                                                   [W]
       in_dispatch_window = discharge_start_h <= t/3600 < discharge_end_h
     day_index is not used by the physics; it is kept for callers' bookkeeping.
@@ -185,12 +188,17 @@ def duty_profile(
     else:
         lo, hi = (float(x) for x in d["daily_energy_frac_range"])
         frac = float(rng.uniform(lo, hi))
-    plan_Wh = frac * full_day_plan_Wh(cfg)
-
     c0, c1 = float(d["charge_start_h"]) * S_PER_H, float(d["charge_end_h"]) * S_PER_H
     d0, d1 = float(d["discharge_start_h"]) * S_PER_H, float(d["discharge_end_h"]) * S_PER_H
     P_c, P_d = float(d["charge_P_W"]), float(d["discharge_P_W"])
-    d_stop = min(d1, d0 + plan_Wh / P_d * S_PER_H) if P_d > 0 else d0
+    dt = float(cfg["site"]["dt_s"])
+    if P_d > 0:
+        # discharge length on the dt grid: round(frac * E_full / P / dt) steps, clipped to the window
+        n_steps = min(int(round(frac * full_day_plan_Wh(cfg) / P_d * S_PER_H / dt)), int(np.floor((d1 - d0) / dt)))
+        d_stop = d0 + n_steps * dt
+        plan_Wh = n_steps * dt * P_d / S_PER_H
+    else:
+        d_stop, plan_Wh = d0, 0.0
 
     def P_request(t: Any) -> np.ndarray:
         t = np.asarray(t, dtype=np.float64)

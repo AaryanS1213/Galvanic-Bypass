@@ -118,15 +118,18 @@ def test_duty_profile(cfg) -> None:
         dis = p > 0
         assert np.all(p[dis] == d["discharge_P_W"])
         assert np.all(win(t)[dis])  # discharge only inside the dispatch window
-        # constant power, energy = plan (to one step), clipped by the window length
-        E_dis = dis.sum() * 60.0 / 3600 * d["discharge_P_W"]
-        cap = (d["discharge_end_h"] - d["discharge_start_h"]) * d["discharge_P_W"]
-        assert E_dis == pytest.approx(min(plan, cap), abs=d["discharge_P_W"] * 60 / 3600 + 1e-6)
+        # constant power on the dt grid: requested energy equals plan exactly
+        dt = float(cfg["site"]["dt_s"])
+        t = np.arange(0, 86400, dt)
+        dis = P(t) > 0
+        E_dis = dis.sum() * dt / 3600 * d["discharge_P_W"]
+        assert E_dis == pytest.approx(plan, rel=1e-12)
         assert win(d["discharge_start_h"] * 3600) and not win(d["discharge_end_h"] * 3600)
     fracs = np.array(fracs)
     lo, hi = d["daily_energy_frac_range"]
-    assert np.all((fracs >= lo) & (fracs <= hi))
-    assert abs(np.mean(fracs == 1.0) - d["full_dod_day_frac"]) < 0.1
+    tol = d["discharge_P_W"] * float(cfg["site"]["dt_s"]) / 7200 / E  # half a step of energy
+    assert np.all((fracs >= lo - tol) & (fracs <= hi + tol))
+    assert abs(np.mean(np.abs(fracs - 1.0) <= tol) - d["full_dod_day_frac"]) < 0.1
 
 
 def test_full_day_plan_fits_usable_energy(cfg) -> None:
@@ -139,6 +142,10 @@ def test_full_day_plan_fits_usable_energy(cfg) -> None:
     d = cfg["site"]["duty"]
     assert plan == pytest.approx(usable * (1 - d["loss_frac"]) * d["full_day_reserve_frac"])
     assert plan < usable < nominal_pack_energy_Wh(cfg)
+    # a full-depth day's dt-aligned plan stays within half a step of E_full
+    rng = np.random.default_rng(0)
+    plans = [duty_profile(cfg, k, rng)[2] for k in range(50)]
+    assert max(plans) <= plan + d["discharge_P_W"] * float(cfg["site"]["dt_s"]) / 7200 + 1e-9
 
 
 def test_outdoor_temp(cfg) -> None:

@@ -1,0 +1,9 @@
+# Parameter identification from telemetry (gb.identify).
+step_dI_min_A: {value: 20, source: "assumed: |dI| between consecutive samples that counts as a current step"}
+sg_window_s: {value: 900, source: "assumed: Savitzky-Golay smoothing window for cell temperatures"}
+sg_polyorder: {value: 2, source: "assumed: Savitzky-Golay polynomial order"}
+C_fit_min_rel: {value: 0.3, source: "assumed: accept fitted C >= 0.3 x mass * cp"}
+C_fit_max_rel: {value: 3.0, source: "assumed: accept fitted C <= 3 x mass * cp"}
+zone_offset_min_K: {value: 2.0, source: "assumed: local air above room by more than this -> hot zone"}
+self_heat_rel: {value: 1.3, source: "assumed: self_rise above this x healthy median -> self-heating (neighbour conduction caps a 2x-R cell at ~1.5x)"}
+zone_self_rise_max_rel: {value: 1.5, source: "assumed: zone cell with self_rise above this x median -> both"}

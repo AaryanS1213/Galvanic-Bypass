@@ -6,7 +6,7 @@ t_lead_s: {value: 600, source: "assumed"}
 trend_window_s: {value: 300, source: "assumed"}
 hysteresis_K: {value: 2, source: "assumed"}
 min_dwell_s: {value: 300, source: "assumed"}
-max_out_s: {value: 1200, source: "assumed"}
+share_period_s: {value: 1200, source: "assumed: rotation period, used only when a constraint binds (k < hot count)"}
 T_crit_C: {value: "= T_lim_C - 3", source: "derived: T_lim 60 - 3 K margin"}
 T_charge_min_C: {value: 15, source: "assumed: plating guard for hard carbon at ~0.25C"}
 T_opt_C:
@@ -18,8 +18,14 @@ zone_soc_cap:
   air_thresholds_C: {value: [28, 31], source: "assumed"}
   caps: {value: ["= soc_max", 0.80, 0.70], source: "assumed"}
 
-drain_soc_min: {value: 0.5, source: "assumed"}
-max_bypass_frac: {value: 0.10, source: "assumed"}
+# Galvanic Bypass: park when slack, share when constrained.
+healthy_guard_C: {value: "= T_band_edge_C", source: "derived: healthy cells must stay inside the band (sweep band_edge - 2 .. band_edge)"}
+v_margin_frac: {value: 0.03, source: "assumed"}
+energy_margin_frac: {value: 0.02, source: "assumed"}
+charge_T_margin_K: {value: 3.0, source: "assumed: charge gate at T_charge_max_C - 3 K"}
+air_margin_K: {value: 0.5, source: "assumed: hot-list threshold max(T_band_edge_C, T_air + 0.5 K)"}
+charge_balance_min_frac: {value: 0.005, source: "assumed: balance the charge (bypass cells ahead) only when the predicted catch-up loss exceeds this share of today's plan"}
+soc_lookahead_s: {value: 0, source: "assumed: 0 = plant's own SOC-limit rule; a one-step look-ahead broke the inverter V floor at end of full days"}
 
 # Baseline: matched protection, REON-like threshold logic.
 threshold_bypass:

@@ -7,7 +7,7 @@ import yaml
 
 from gb.config import DEFAULT_CONFIG_DIR, SOURCE_RE, ConfigError, assumptions_table, load_config
 
-FILES = {"cell", "pack", "site", "aging", "controllers", "econ", "column_map", "ingest", "scenarios"}
+FILES = {"cell", "pack", "site", "aging", "controllers", "econ", "column_map", "identify", "ingest", "scenarios"}
 
 
 def _count_leaves(node: Any) -> int:
